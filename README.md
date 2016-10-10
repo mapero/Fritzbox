@@ -1,22 +1,23 @@
-tr-064
+Fritz!Box (fritzbox)
 ======
-
-TR-064 - UPnP/IGD for node.js
 
 ## Description
 
-A library to interact with routers and other network devices.
-Tested and designd for Fritz.Box routers.
+A library to connect to the TR-064 and UPnP API of an AVM Fritz!Box and to interact with it.
 
 This library is capable of:
-* Supports the UPnP, IGD and PMR (Samsung TV) Protocol
-* Read and configure Services
-* Authentication with username/password or password only
-* SSL encryption
-* Transactions
-* Subscribe to Events with included EventServer
+* Supports the UPnP and TR-064 specification of the Fritz!Box
+* Call actions of services
+* Authentication with username/password on http authentication level
+* SSL encryption with custom port settings
+* Using promises instead of callbacks
+* Subscribe to Events with included EventServer (not working at the moment)
 
-More info about TR-064: http://www.avm.de/de/Extern/files/tr-064/AVM_TR-064_first_steps.pdf
+More info about capabilities provided by the TR-064 specification: http://www.avm.de/de/Extern/files/tr-064/AVM_TR-064_first_steps.pdf
+
+## Special thanks
+
+This library is a complete rework of the tr-064 library from [Hendrik Westerberg](https://github.com/hendrikw01). Thanks for the initial work.
 
 ## Install
 
@@ -24,43 +25,31 @@ More info about TR-064: http://www.avm.de/de/Extern/files/tr-064/AVM_TR-064_firs
   npm install tr-064
 </pre>
 
-## It`s simple
+## It is simple
 
 Connect to the device and read a Service.
 
 ```javascript
-var tr = require("tr-064");
-var tr064 = new tr.TR064();
-tr064.initTR064Device("fritz.box", 49000, function (err, device) {
-    if (!err) {
-       var wanip = device.services["urn:dslforum-org:service:WANIPConnection:1"];
-       wanip.actions.GetInfo(function(err, result){
-       		console.log(result);
-       });
-    }
-});
+var Fritzbox = require('fritzbox');
+var options = {
+  host: 'fritz.box',
+  port: 49000,
+  ssl: false,
+  user: 'username',
+  password: 'password'
+}
 
-```
+var fritzbox = new Fritzbox(options);
 
-## Save communication (SSL Encryption, Authentication)
-
-```javascript
-var tr = require("tr-064");
-var tr064 = new tr.TR064();
-tr064.initTR064Device("fritz.box", 49000, function (err, device) {
-    if (!err) {
-        device.startEncryptedCommunication(function (err, sslDev) {
-            if (!err) {
-                sslDev.login([USER], [PASSWORD]);
-                var wanip = sslDev.services["urn:dslforum-org:service:WANIPConnection:1"];
-                wanip.actions.GetInfo(function (err, result) {
-                    console.log(result);
-                });
-            }
-        });
-    }
-});
-
+fritzbox.initTR064Device().then(function(){
+    console.log('Successfully initialized device');
+    var wanip = fritzbox.services["urn:dslforum-org:service:WANIPConnection:1"];
+    return wanip.actions.GetInfo();
+  }).then(function(result) {
+    console.log(result);
+  }).catch(function(error) {
+    console.log(error);
+  });
 ```
 
 ## List All Services and Variables
@@ -68,100 +57,50 @@ tr064.initTR064Device("fritz.box", 49000, function (err, device) {
 Get the info from both protocols.
 
 ```javascript
-var tr = require("tr-064");
-var tr064 = new tr.TR064();
-tr064.initTR064Device("fritz.box", 49000, function (err, device) {
-    if (!err) {
-        console.log("Found device! - TR-064");
-        showDevice(device);
-    }
-});
+var Fritzbox = require("./lib/Fritzbox");
+var Promise = require("bluebird");
 
-tr064.initIGDDevice("fritz.box", 49000, function (err, device) {
-    if (!err) {
-        console.log("Found device! - IGD");
-        showDevice(device);
-    }
-});
-
-var showDevice = function (device) {
-    console.log("=== " + device.meta.friendlyName + " ===");
-    device.meta.servicesInfo.forEach(function (serviceType) {
-        var service = device.services[serviceType];
-        console.log("  ---> " + service.meta.serviceType + " <---");
-        service.meta.actionsInfo.forEach(function (action) {
-            console.log("   # " + action.name + "()");
-            action.inArgs.forEach(function (arg) {
-                console.log("     IN : " + arg);
-            });
-            action.outArgs.forEach(function (arg) {
-                console.log("     OUT: " + arg);
-            });
-        });
-    });
+var options = {
+  host: 'fritz.box',
+  port: 49000,
+  ssl: false,
+  user: 'username',
+  password: 'password'
 }
+
+var fritzbox = new Fritzbox.Fritzbox(options);
+
+//Initialize Device
+Promise.all([fritzbox.initTR064Device(), fritzbox.initIGDDevice()])
+//Print information about available services
+  .then(function() {
+    for (var serviceName in box.services) {
+      console.log("=== "+serviceName+" ===");
+      for (var actionName in box.services[serviceName].actionsInfo) {
+        console.log("   # " + actionName + "()");
+        box.services[serviceName].actionsInfo[actionName].inArgs.forEach(function(arg) {
+          console.log("     IN : " + arg);
+        });
+        box.services[serviceName].actionsInfo[actionName].outArgs.forEach(function(arg) {
+          console.log("     OUT : " + arg);
+        });
+      }
+    }
+  })
 ```
 
 ## Methods
 
-### initTR064Device(host, port, callback)
+### fritzbox.initTR064Device()
 
-Initialize the TR - 064 UPnP controller
+Initialize the TR - 064 UPnP controller and adds the TR-064 services to the services array.
 
-* `host` - hostname of the device 
-* `port` - port of the device(standard: 49000) 
-* `callback` - (err, device)
+Returns
+* `Promise`
 
-### initIGDDevice(host, port, callback)
+### fritzbox.initIGDDevice()
 
-Initialize the TR - 064 IGD controller
+Initialize the TR - 064 IGD controller and adds the IGD services to the services array.
 
-* `host` - hostname of the device 
-* `port` - port of the device(standard: 49000) 
-* `callback` - (err, device)
-
-### device.startEncryptedCommunication([caFile],callback)
-
-Starts SSL encrypted Communication
-
-* `caFile` - Filename of custom .pem file (Optional)
-* `callback` - (err, device)
-
-### device.stopEncryptedCommunication()
-
-Stops SSL encrypted Communication
-
-### device.login([user],password)
-
-Configure device to use authentication for every request
-
-* `user` - Username (Optional, default device user is used instead)
-* `password` - Device password
-
-### device.logout()
-
-Configure device to not use authentication
-
-### device.startTransaction(callback)
-
-Starts a 'device-side' transaction
-
-* `callback` - (err, device)
-
-### device.stopTransaction()
-
-Ends the current transaction
-
-### device.meta
-
-Array with all info about services and actions
-
-### device.services[`Service Identifier`]
-
-Gets the specified service form the device
-
-* `Service Identifier` - usually in the form of: urn:dslforum-org:service:XXX:1
-
-### service.actions.XXX([args], callback)
-* `args` - Array of args to configure or read a service.
-* `callback` - (err, result)
+Returns
+* `Promise`

@@ -1,32 +1,37 @@
 {
-    "name": "tr-064",
-    "version": "0.2.0",
-    "author": "Hendrik Westerberg <hendrik@gestorf.com>",
-    "description": "TR-064 - UPnP/IGD for node.js",
-    "scripts": {
-        "test": "node ./testing.js"
-    },
-    "main": "./lib/TR064",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/hendrikw01/tr-064.git"
-    },
-    "keywords": [
+  "name": "fritzbox",
+  "version": "1.0.0",
+  "author": "Jochen Scheib <mail@jochen-scheib.de>",
+  "description": "Fritzbox - UPnP/IGD for node.js",
+  "main": "./lib/Fritzbox",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mapero/Fritzbox.git"
+  },
+  "keywords": [
     "TR-064",
     "UPnP",
     "IGD",
     "Fritz.Box",
     "Router"
   ],
-    "dependencies": {
-        "xml2js": ">=0.4.0",
-        "request": ">=2.30",
-        "eyes": ">=0.1.0",
-        "async": ">=0.2.0"
-    },
-    "analyze": false,
-    "license": "Apache License",
-    "engines": {
-        "node": ">=0.10"
+  "dependencies": {
+    "async": ">=0.2.0",
+    "bluebird": "^3.4.6",
+    "eyes": ">=0.1.0",
+    "request": ">=2.30",
+    "underscore": "^1.8.3",
+    "xml2js": ">=0.4.0",
+    "xmlbuilder": "^8.2.2"
+  },
+  "analyze": false,
+  "license": "Apache License",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "contributors": [
+    { "name" : "Hendrik Westerberg"
+    , "email" : "hendrik@gestorf.com"
     }
+  ]
 }
