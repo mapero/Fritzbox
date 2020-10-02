@@ -17,7 +17,6 @@
   ],
   "dependencies": {
     "async": ">=0.2.0",
-    "bluebird": "^3.4.6",
     "eyes": ">=0.1.0",
     "request": ">=2.30",
     "underscore": "^1.8.3",

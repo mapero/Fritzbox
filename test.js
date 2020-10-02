@@ -1,5 +1,4 @@
 var Fritzbox = require("./lib/Fritzbox");
-var Promise = require("bluebird");
 
 var options = {
   host: "fritz.box",
