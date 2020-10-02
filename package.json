@@ -21,7 +21,7 @@
     "eyes": ">=0.1.0",
     "underscore": "^1.8.3",
     "xml2js": ">=0.4.0",
-    "xmlbuilder": "^8.2.2"
+    "xmlbuilder": "^15.1.1"
   },
   "analyze": false,
   "license": "Apache License",
