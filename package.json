@@ -17,8 +17,8 @@
   ],
   "dependencies": {
     "async": ">=0.2.0",
+    "axios": "^0.20.0",
     "eyes": ">=0.1.0",
-    "request": ">=2.30",
     "underscore": "^1.8.3",
     "xml2js": ">=0.4.0",
     "xmlbuilder": "^8.2.2"
@@ -35,6 +35,6 @@
     }
   ],
   "scripts": {
-    "debug": "node --nolazy --inspect-brk=9229 ./test.js"
+    "debug": "node --nolazy ./test.js"
   }
 }
