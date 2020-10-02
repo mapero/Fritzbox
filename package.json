@@ -30,8 +30,12 @@
     "node": ">=0.10"
   },
   "contributors": [
-    { "name" : "Hendrik Westerberg"
-    , "email" : "hendrik@gestorf.com"
+    {
+      "name": "Hendrik Westerberg",
+      "email": "hendrik@gestorf.com"
     }
-  ]
+  ],
+  "scripts": {
+    "debug": "node --nolazy --inspect-brk=9229 ./test.js"
+  }
 }
